@@ -1,5 +1,6 @@
-import { memo, useEffect, useRef, useState } from 'react';
-import PdfTron, { Core } from '@pdftron/webviewer';
+import { memo, useEffect, useRef } from 'react';
+import PdfTron from '@pdftron/webviewer';
+import { setDefaultAnnotationColor } from './utils';
 
 export const WEBVIEWER_PATH = '/8.9.0';
 export const WEBVIEWER_LICENSE_KEY = import.meta.env[
@@ -9,8 +10,6 @@ export const WEBVIEWER_LICENSE_KEY = import.meta.env[
 interface Props {
 	container: { height: number; width: number; };
 }
-
-type AuthoredAnnotation = Core.Annotations.Annotation & { authorId };
 
 function getLocalAnnotations() {
 	return JSON.parse(window.localStorage.getItem('file_xfdf_data') || '{}');
@@ -65,7 +64,7 @@ function WebViewer({ container }: Props) {
 				licenseKey: WEBVIEWER_LICENSE_KEY,
 				path: WEBVIEWER_PATH,
 				filename: 'PDFTron test file',
-				initialDoc: 'http://127.0.0.1:3000/test_file.pdf',
+				initialDoc: 'http://127.0.0.1:3001/test_file.pdf',
 				annotationUser: 'Test user',
 				preloadWorker: 'pdf',
 				enableFilePicker: false,
@@ -91,7 +90,7 @@ function WebViewer({ container }: Props) {
 			},
 			viewer.current
 		).then(async (instance) => {
-			const { documentViewer, annotationManager } = instance.Core;
+			const { documentViewer, annotationManager, Annotations, Tools } = instance.Core;
 
 			documentViewer.addEventListener('documentLoaded', () => {
 				const storedAnnotations = getLocalAnnotations();
@@ -100,6 +99,15 @@ function WebViewer({ container }: Props) {
 				})
 			});
 
+			//
+
+			setDefaultAnnotationColor(
+				documentViewer,
+				Annotations,
+				Tools,
+				'#DB464A'
+			);
+
 			// Bind annotation change events to a callback function
 			annotationManager.addEventListener(
 				'annotationChanged',
@@ -107,21 +115,9 @@ function WebViewer({ container }: Props) {
 					if (info.imported) {
 						return;
 					}
-
 					const xfdf = await annotationManager.exportAnnotations({ annotList: annotations });
-
 					annotations.forEach((annotation) => {
-						let parentAuthorId = null;
 						if (type === 'add') {
-							if (annotation.InReplyTo) {
-								parentAuthorId =
-									(
-										annotationManager.getAnnotationById(
-											annotation.InReplyTo
-										) as AuthoredAnnotation
-									).authorId || 'default';
-							}
-
 							createAnnotation(annotation.Id, { xfdf });
 						} else if (type === 'modify') {
 							updateAnnotation(annotation.Id, { xfdf });

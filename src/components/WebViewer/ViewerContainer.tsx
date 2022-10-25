@@ -27,7 +27,7 @@ function ViewerContainer() {
         if (containerRef?.current) {
             setContainerSize(containerRef.current);
         }
-    }, [containerRef?.current, setContainerSize]);
+    }, [setContainerSize]);
 
     return (
         <el.ViewerContainer ref={containerRef} width={container.width}>
