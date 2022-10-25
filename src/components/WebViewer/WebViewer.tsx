@@ -99,8 +99,6 @@ function WebViewer({ container }: Props) {
 				})
 			});
 
-			//
-
 			setDefaultAnnotationColor(
 				documentViewer,
 				Annotations,
