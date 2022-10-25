@@ -42,11 +42,6 @@ async function onAnnotationCreated(annotationManager, data) {
 	let annotations = await annotationManager.importAnnotations(
 		xfdf
 	);
-	if (annotations.length === 0) {
-		annotations = await annotationManager.importAnnotationCommand(
-			xfdf
-		);
-	}
 	const annotation = annotations[0];
 	if (annotation) {
 		await annotation.resourcesLoaded();
