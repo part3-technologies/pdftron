@@ -1,6 +1,8 @@
+import Block from './components/Block/Block';
+
 function App() {
 	return (
-		<p>test</p>
+		<Block />
 	);
 }
 

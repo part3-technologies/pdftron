@@ -7,7 +7,6 @@
       "jest",
       "@emotion/react/types/css-prop",
       "vite/client",
-      "vite-plugin-pwa/client",
       "vite-plugin-svgr/client",
       "WebWorker"
     ],
@@ -28,5 +27,4 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "exclude": ["src/stories/**", "functions/**"]
 }
